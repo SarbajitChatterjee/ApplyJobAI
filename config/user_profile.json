@@ -1,0 +1,42 @@
+{
+    "personal_info": {
+        "name": "Sarbajit Chatterjee",
+        "current_location": "Germany",
+        "relocation_ready": true,
+        "availability": "immediate"
+    },
+    "core_background": {
+        "primary_experience": "Delivery management, QA automation, DevOps, stakeholder coordination",
+        "international_experience": "Cross-functional teams, international collaboration",
+        "years_experience": 5
+    },
+    "transition_elements": {
+        "education": "MBA in European Management and Entrepreneurship (Saarland University, Germany)",
+        "certifications": [
+            "IBM Product Management Course",
+            "Google Data Analytics"
+        ],
+        "strategic_projects": [
+            "IoT venture",
+            "EV analytics", 
+            "AI agent development"
+        ]
+    },
+    "personality_traits": {
+        "core_traits": ["confident", "excited to learn", "highly motivated"],
+        "work_style": ["ready for high-pressure environments", "honest", "bold", "non-generic"],
+        "communication_style": "direct and authentic"
+    },
+    "language_skills": {
+        "fluent": ["English", "Hindi", "Bengali"],
+        "learning": {
+            "language": "German",
+            "current_level": "B2",
+            "target_level": "C1"
+        }
+    },
+    "interests": {
+        "hobbies": ["Football", "Movies", "Series", "Formula 1"],
+        "professional_interests": ["Product Management", "Digital Transformation", "AI/ML"]
+    }
+}
