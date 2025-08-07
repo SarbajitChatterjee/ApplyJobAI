@@ -8,12 +8,12 @@ import os
 from typing import Dict, Any, Optional
 from datetime import datetime, timedelta
 
-from utils.api_client import OpenAIClient
+from utils.api_client import LMStudioClient
 
 class CompanyResearcher:
     """Handles comprehensive company research and analysis"""
     
-    def __init__(self, api_client: OpenAIClient):
+    def __init__(self, api_client: LMStudioClient):
         self.api_client = api_client
         self.cache_dir = "data/cache"
         os.makedirs(self.cache_dir, exist_ok=True)

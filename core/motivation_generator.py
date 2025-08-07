@@ -6,14 +6,14 @@ Creates personalized, compelling motivation letters
 import re
 from typing import Dict, Any
 
-from utils.api_client import OpenAIClient
+from utils.api_client import LMStudioClient
 from utils.text_processor import TextProcessor
 from config.settings import MOTIVATION_LETTER_MIN_WORDS, MOTIVATION_LETTER_MAX_WORDS
 
 class MotivationLetterGenerator:
     """Generates tailored motivation letters following specific guidelines"""
     
-    def __init__(self, api_client: OpenAIClient, user_profile: Dict[str, Any]):
+    def __init__(self, api_client: LMStudioClient, user_profile: Dict[str, Any]):
         self.api_client = api_client
         self.user_profile = user_profile
         self.text_processor = TextProcessor()

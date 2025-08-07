@@ -1,30 +1,34 @@
 """
-Input validation utilities for CV & Motivation Letter AI Agent
+Input Validation Functions
 """
 
 import os
-from typing import List
+from typing import Tuple
 
 def validate_inputs(job_profile: str, cv_file_path: str, cv_language: str) -> bool:
-    """Validate user inputs"""
-    # Check if job profile is provided
-    if not job_profile.strip():
-        print("❌ Error: Job profile cannot be empty")
+    """Validate all user inputs"""
+    
+    # Validate job profile
+    if not job_profile or len(job_profile.strip()) < 50:
+        print("❌ Job profile must be at least 50 characters long")
         return False
     
-    # Check if CV file exists
+    # Validate CV file
     if not os.path.exists(cv_file_path):
-        print(f"❌ Error: CV file not found at {cv_file_path}")
+        print(f"❌ CV file not found: {cv_file_path}")
         return False
     
-    # Check if CV file is readable
-    if not os.access(cv_file_path, os.R_OK):
-        print(f"❌ Error: Cannot read CV file at {cv_file_path}")
+    # Check file extension
+    valid_extensions = ['.pdf', '.docx', '.txt']
+    file_ext = os.path.splitext(cv_file_path)[1].lower()
+    if file_ext not in valid_extensions:
+        print(f"❌ Unsupported file type: {file_ext}. Supported: {valid_extensions}")
         return False
     
-    # Validate language (basic check)
-    if not cv_language.strip():
-        print("❌ Error: CV language cannot be empty")
+    # Validate language
+    supported_languages = ['English', 'German', 'French', 'Spanish']
+    if cv_language not in supported_languages:
+        print(f"❌ Unsupported language: {cv_language}. Supported: {supported_languages}")
         return False
     
-    return True 
+    return True

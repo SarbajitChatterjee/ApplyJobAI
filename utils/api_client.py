@@ -13,17 +13,23 @@ from .logger import get_logger
 class LMStudioClient:
     """Wrapper class for LM Studio API interactions with full logging"""
     
-    def __init__(self, base_url: str = "http://localhost:1234", model_name: str = "gpt-oss-20b"):
-        self.base_url = base_url.rstrip('/')
-        self.model_name = model_name
+    def __init__(self):
+        """Initialize with environment variables"""
+        from config.settings import LM_STUDIO_URL, MODEL_NAME, REQUEST_TIMEOUT
+        
+        self.base_url = LM_STUDIO_URL.rstrip('/')
+        self.model_name = MODEL_NAME
+        self.timeout = REQUEST_TIMEOUT
         self.api_endpoint = f"{self.base_url}/v1/chat/completions"
+        
+        from utils.logger import get_logger
         self.logger = get_logger()
         
-        # Log initialization
-        self.logger.log_processing_step("API Client Initialization", 
-                                       f"URL: {self.base_url}, Model: {model_name}")
+        self.logger.log_processing_step(
+            "API Client Initialization",
+            f"URL: {self.base_url}, Model: {self.model_name}, Timeout: {self.timeout}s"
+        )
         
-        # Test connection with logging
         self._test_connection()
     
     def _test_connection(self):

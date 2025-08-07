@@ -1,5 +1,5 @@
 """
-Main Agent Controller with Comprehensive Logging
+Main Agent Controller using Environment Variables
 """
 
 import json
@@ -14,19 +14,20 @@ from .interactive_approval import InteractiveApproval
 from utils.file_parser import FileParser
 from utils.api_client import LMStudioClient
 from utils.logger import get_logger, log_function_call
+from config.settings import LM_STUDIO_URL, MODEL_NAME
 
 class CVMotivationAgent:
-    """Main agent class with comprehensive logging"""
+    """Main agent class with comprehensive logging using environment variables"""
     
-    def __init__(self, lm_studio_url: str = "http://localhost:1234", model_name: str = "gpt-oss-20b"):
-        """Initialize agent with full logging"""
+    def __init__(self):
+        """Initialize agent using environment configuration"""
         session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.logger = get_logger(session_id)
         
-        # Log startup configuration
+        # Log startup with environment variables
         startup_config = {
-            "lm_studio_url": lm_studio_url,
-            "model_name": model_name,
+            "lm_studio_url": LM_STUDIO_URL,
+            "model_name": MODEL_NAME,
             "session_id": session_id,
             "timestamp": datetime.now().isoformat()
         }
@@ -34,7 +35,7 @@ class CVMotivationAgent:
         
         # Initialize components with logging
         self.logger.log_processing_step("Initializing API Client")
-        self.api_client = LMStudioClient(lm_studio_url, model_name)
+        self.api_client = LMStudioClient()
         
         self.logger.log_processing_step("Loading User Profile")
         self.user_profile = self._load_user_profile()
@@ -53,7 +54,7 @@ class CVMotivationAgent:
         self.interactive_approval = InteractiveApproval(self.api_client)
         self.file_parser = FileParser()
         
-        self.logger.app_logger.info(f"🤖 Agent initialized successfully with model: {model_name}")
+        self.logger.app_logger.info(f"🤖 Agent initialized successfully with model: {MODEL_NAME}")
     
     def _load_user_profile(self) -> Dict[str, Any]:
         """Load user profile with logging"""
@@ -142,6 +143,23 @@ class CVMotivationAgent:
             self.logger.log_error(e, "Application Processing")
             self.logger.app_logger.error(f"❌ Application processing failed: {str(e)}")
             raise
+    
+    def display_results(self, results: Dict[str, Any]):
+        """Display formatted results to user"""
+        print("\n" + "="*60)
+        print("🎉 MOTIVATION LETTER GENERATED")
+        print("="*60)
+        print(results["motivation_letter"])
+        
+        print("\n" + "="*60)
+        print("📋 CV SUGGESTIONS SUMMARY")
+        print("="*60)
+        for section, suggestion in results["cv_suggestions"].items():
+            print(f"\n📌 {section}:")
+            preview = suggestion[:150] + "..." if len(suggestion) > 150 else suggestion
+            print(preview)
+        
+        print(f"\n💾 Results saved with session ID: {results['session_id']}")
     
     def _save_results(self, results: Dict[str, Any]):
         """Save results with detailed logging"""

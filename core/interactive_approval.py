@@ -5,6 +5,7 @@ Interactive Approval System with Comprehensive Logging
 from typing import Dict, Any
 from utils.api_client import LMStudioClient
 from utils.logger import get_logger
+from datetime import datetime
 
 class InteractiveApproval:
     """Manages interactive approval with detailed user interaction logging"""
@@ -137,17 +138,78 @@ class InteractiveApproval:
     
     def _modify_suggestions(self, section_name: str, original_suggestions: str, 
                            modification_request: str) -> str:
-        """Apply modifications with detailed logging"""
+        """Apply user-requested modifications to suggestions"""
         
         self.logger.log_processing_step("Generating Modifications", 
                                       f"Section: {section_name}")
         
-        # ... (rest of the method implementation with API logging)
+        modification_prompt = f"""
+        You are a CV optimization expert. Modify the suggestions for the {section_name} section based on the user's request.
+        
+        ORIGINAL SUGGESTIONS:
+        {original_suggestions}
+        
+        USER'S MODIFICATION REQUEST:
+        {modification_request}
+        
+        Please provide updated suggestions that incorporate the user's feedback while maintaining:
+        - Professional quality and impact
+        - ATS optimization
+        - Relevance to the target role
+        - Honest and constructive tone
+        
+        Modified suggestions:
+        """
+        
+        try:
+            modified_response = self.api_client.chat_completion(
+                messages=[{"role": "user", "content": modification_prompt}],
+                temperature=0.4,
+                max_tokens=1000
+            )
+            
+            self.logger.log_processing_step("Modification Generation Completed", 
+                                          f"Section: {section_name}")
+            
+            return modified_response
+            
+        except Exception as e:
+            self.logger.log_error(e, f"Modification generation for {section_name}")
+            return f"Error generating modifications: {str(e)}. Please try again."
     
     def _answer_question(self, section_name: str, suggestions: str, question: str) -> str:
-        """Answer questions with detailed logging"""
+        """Answer user questions about suggestions"""
         
         self.logger.log_processing_step("Answering User Question", 
                                       f"Section: {section_name}")
         
-        # ... (rest of the method implementation with API logging)
+        qa_prompt = f"""
+        You are a helpful CV expert. Answer the user's question about the {section_name} section suggestions.
+        
+        SECTION SUGGESTIONS:
+        {suggestions}
+        
+        USER'S QUESTION:
+        {question}
+        
+        Provide a clear, helpful answer that explains the reasoning behind suggestions or clarifies any confusion.
+        Be specific and actionable in your response.
+        
+        Answer:
+        """
+        
+        try:
+            answer_response = self.api_client.chat_completion(
+                messages=[{"role": "user", "content": qa_prompt}],
+                temperature=0.3,
+                max_tokens=500
+            )
+            
+            self.logger.log_processing_step("Question Answering Completed", 
+                                          f"Section: {section_name}")
+            
+            return answer_response
+            
+        except Exception as e:
+            self.logger.log_error(e, f"Question answering for {section_name}")
+            return f"Error answering question: {str(e)}. Please try asking again."

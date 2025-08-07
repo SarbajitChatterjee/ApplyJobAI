@@ -7,13 +7,13 @@ import json
 import re
 from typing import Dict, List, Any
 
-from utils.api_client import OpenAIClient
+from utils.api_client import LMStudioClient
 from config.settings import CV_SECTIONS
 
 class CVAnalyzer:
     """Analyzes CV content and provides section-by-section suggestions"""
     
-    def __init__(self, api_client: OpenAIClient, user_profile: Dict[str, Any]):
+    def __init__(self, api_client: LMStudioClient, user_profile: Dict[str, Any]):
         self.api_client = api_client
         self.user_profile = user_profile
     
