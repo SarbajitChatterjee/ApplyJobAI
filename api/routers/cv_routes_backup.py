@@ -27,6 +27,7 @@ router = APIRouter(
 async def upload_and_process(
     background_tasks: BackgroundTasks,
     cv_file: UploadFile = File(..., description="CV file (PDF, DOCX, or TXT)"),
+    #job_profile: str = Form(..., description="Complete job description"),
     job_profile: UploadFile = File(..., description="Job description file (PDF, DOCX, or TXT)"),
     cv_language: str = Form("English", description="Language preference for CV suggestions")
 ):
@@ -34,7 +35,7 @@ async def upload_and_process(
     Upload CV file and job profile, start processing
     
     This endpoint:
-    1. Accepts CV and job description files upload
+    1. Accepts CV file upload and job description
     2. Validates inputs
     3. Starts background processing
     4. Returns session ID for tracking progress
@@ -44,49 +45,49 @@ async def upload_and_process(
     session_id = str(uuid.uuid4())
     
     try:
-        # Validate CV file
+        # Validate file type
         if not cv_file.filename:
-            raise HTTPException(status_code=400, detail="No CV file uploaded")
+            raise HTTPException(status_code=400, detail="No file uploaded")
         
-        cv_file_extension = os.path.splitext(cv_file.filename)[1].lower()
-        if cv_file_extension not in ['.pdf', '.docx', '.txt']:
+        file_extension = os.path.splitext(cv_file.filename)[1].lower()
+        if file_extension not in ['.pdf', '.docx', '.txt']:
             raise HTTPException(
                 status_code=400, 
-                detail=f"Unsupported CV file type: {cv_file_extension}. Supported: .pdf, .docx, .txt"
+                detail=f"Unsupported file type: {file_extension}. Supported: .pdf, .docx, .txt"
             )
         
-        # Validate job profile file
-        if not job_profile.filename:
-            raise HTTPException(status_code=400, detail="No job profile file uploaded")
+        # Save uploaded file temporarily
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as tmp_file:
+            content = await cv_file.read()
+            tmp_file.write(content)
+            temp_file_path = tmp_file.name
         
-        job_file_extension = os.path.splitext(job_profile.filename)[1].lower()
-        if job_file_extension not in ['.pdf', '.docx', '.txt']:
-            raise HTTPException(
-                status_code=400, 
-                detail=f"Unsupported job profile file type: {job_file_extension}. Supported: .pdf, .docx, .txt"
-            )
+        # Validate inputs
+        if not validate_inputs(job_profile, temp_file_path, cv_language):
+            os.unlink(temp_file_path)  # Clean up temp file
+            raise HTTPException(status_code=422, detail="Input validation failed")
         
-        # Call the correct method with UploadFile objects (not file paths)
-        result = await agent_service.process_files_async(
-            session_id=session_id,
-            cv_file=cv_file,
-            job_profile_file=job_profile,
-            cv_language=cv_language
+        # Create session
+        agent_service.create_session(session_id)
+        
+        # Start background processing
+        background_tasks.add_task(
+            agent_service.process_application_async,
+            session_id, job_profile, temp_file_path, cv_language
         )
         
         return ProcessingStatus(
-            session_id=result["session_id"],
-            status=result["status"],
-            current_step=result["current_step"],
-            progress_percentage=result["progress_percentage"],
-            message=result["message"]
+            session_id=session_id,
+            status="processing",
+            current_step="initializing",
+            progress_percentage=5,
+            message="Processing started successfully"
         )
         
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Processing failed: {str(e)}")
-
 
 @router.get("/status/{session_id}", response_model=ProcessingStatus)
 async def get_processing_status(session_id: str):

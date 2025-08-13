@@ -48,6 +48,7 @@ logs/
 # Output files and cache
 data/output/
 data/cache/
+temp/
 *.tmp
 *.temp
 
