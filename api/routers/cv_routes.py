@@ -163,7 +163,7 @@ async def download_motivation_letter(session_id: str):
     
     status = agent_service.get_session_status(session_id)
     
-    if not status or status.status != "completed":
+    if not status or status["status"] != "completed":
         raise HTTPException(status_code=404, detail="Session not found or not completed")
     
     try:
@@ -194,7 +194,7 @@ async def download_cv_suggestions(session_id: str):
     
     status = agent_service.get_session_status(session_id)
     
-    if not status or status.status != "completed":
+    if not status or status["status"] != "completed":
         raise HTTPException(status_code=404, detail="Session not found or not completed")
     
     try:
@@ -216,3 +216,16 @@ async def download_cv_suggestions(session_id: str):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Download failed: {str(e)}")
+
+# Create Dummy API for dummy Session ID generation to test
+@router.post("/api/v1/create-dummy-session/{session_id}")
+async def create_dummy_session(session_id: str):
+    """TEMPORARY: Create a dummy completed session for testing purposes"""
+    agent_service.create_dummy_completed_session(session_id)
+    return {
+        "session_id": session_id, 
+        "status": "completed",
+        "message": "Dummy session created successfully - ready for testing finalize/download endpoints"
+    }
+
+
