@@ -218,7 +218,7 @@ async def download_cv_suggestions(session_id: str):
         raise HTTPException(status_code=500, detail=f"Download failed: {str(e)}")
 
 # Create Dummy API for dummy Session ID generation to test
-@router.post("/api/v1/create-dummy-session/{session_id}")
+@router.post("/create-dummy-session/{session_id}")
 async def create_dummy_session(session_id: str):
     """TEMPORARY: Create a dummy completed session for testing purposes"""
     agent_service.create_dummy_completed_session(session_id)

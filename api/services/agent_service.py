@@ -389,27 +389,35 @@ class AgentService:
                     },
                     "cv_suggestions": {
                         "Professional Profile": {
+                            "section_name": "Professional Profile",
                             "title": "Professional Profile",
+                            "original_content": "Original professional profile content from CV",
                             "content": "Mock updated professional profile with relevant keywords",
-                            "suggestions": ["Add relevant keywords", "Quantify achievements"],
+                            "suggestions": "Add relevant keywords and quantify achievements",
                             "status": "enhanced"
                         },
                         "Experience": {
+                            "section_name": "Experience",
                             "title": "Experience", 
+                            "original_content": "Original experience section content from CV",
                             "content": "Mock enhanced experience section highlighting relevant achievements",
-                            "suggestions": ["Use action verbs", "Include metrics", "Show career progression"],
+                            "suggestions": "Use action verbs, include metrics, and show career progression",
                             "status": "enhanced"
                         },
                         "Skills": {
+                            "section_name": "Skills",
                             "title": "Skills",
+                            "original_content": "Original skills section content from CV",
                             "content": "Mock optimized skills section for the target role", 
-                            "suggestions": ["Match job requirements", "Include technical skills", "Add certifications"],
+                            "suggestions": "Match job requirements, include technical skills, and add certifications",
                             "status": "enhanced"
                         },
                         "Education": {
+                            "section_name": "Education",
                             "title": "Education",
+                            "original_content": "Original education section content from CV",
                             "content": "Mock formatted education section appropriately",
-                            "suggestions": ["Include relevant coursework", "Add certifications", "Highlight honors"],
+                            "suggestions": "Include relevant coursework, add certifications, and highlight honors",
                             "status": "enhanced"
                         }
                     },
