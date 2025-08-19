@@ -295,35 +295,27 @@ class AgentService:
 
             cv_suggestions = {
                 "Professional Profile": {
-                    "section_name": "Professional Profile",
                     "title": "Professional Profile",
-                    "original_content": "Original professional profile content",
                     "content": "Updated professional profile with relevant keywords",
-                    "suggestions": "Add relevant keywords and quantify achievements",  
+                    "suggestions": ["Add relevant keywords", "Quantify achievements"],
                     "status": "enhanced"
                 },
                 "Experience": {
-                    "section_name": "Experience",
                     "title": "Experience", 
-                    "original_content": "Original experience content",
                     "content": "Enhanced experience section highlighting relevant achievements",
-                    "suggestions": "Use action verbs, include metrics, and show career progression", 
+                    "suggestions": ["Use action verbs", "Include metrics", "Show career progression"],
                     "status": "enhanced"
                 },
                 "Skills": {
-                    "section_name": "Skills",
                     "title": "Skills",
-                    "original_content": "Original skills content",
                     "content": "Optimized skills section for the target role", 
-                    "suggestions": "Match job requirements, include technical skills, and add certifications",  
+                    "suggestions": ["Match job requirements", "Include technical skills", "Add certifications"],
                     "status": "enhanced"
                 },
                 "Education": {
-                    "section_name": "Education",
                     "title": "Education",
-                    "original_content": "Original education content",
                     "content": "Formatted education section appropriately",
-                    "suggestions": "Include relevant coursework, add certifications, and highlight honors",  # ✅ String
+                    "suggestions": ["Include relevant coursework", "Add certifications", "Highlight honors"],
                     "status": "enhanced"
                 }
             }
@@ -370,6 +362,107 @@ class AgentService:
             })
             
             raise Exception(f"Finalization failed: {str(e)}")
+
+    # Create Dummy Session ID for testing.
+    def create_dummy_completed_session(self, session_id: str):
+        """Create a fake completed session for testing"""
+        print(f"🔥 START: Creating dummy session {session_id}")
+        
+        try:
+            print("✅ Step 1: Creating session dict")
+            self.active_sessions[session_id] = {
+                "status": "completed",
+                "current_step": "completed",
+                "progress": 100,
+                "agent": None,
+                "results": {},
+                "created_at": datetime.now(),
+                "interaction_queue": queue.Queue(),
+                "response_queue": queue.Queue(),
+                "final_results": {
+                    "session_id": session_id,
+                    "timestamp": datetime.now(),
+                    "status": "completed",
+                    "company_research": {
+                        "company_name": "Test Company",
+                        "detailed_research": "Mock company research data for testing"
+                    },
+                    "cv_suggestions": {
+                        "Professional Profile": {
+                            "section_name": "Professional Profile",
+                            "title": "Professional Profile",
+                            "original_content": "Original professional profile content from CV",
+                            "content": "Mock updated professional profile with relevant keywords",
+                            "suggestions": "Add relevant keywords and quantify achievements",
+                            "status": "enhanced"
+                        },
+                        "Experience": {
+                            "section_name": "Experience",
+                            "title": "Experience", 
+                            "original_content": "Original experience section content from CV",
+                            "content": "Mock enhanced experience section highlighting relevant achievements",
+                            "suggestions": "Use action verbs, include metrics, and show career progression",
+                            "status": "enhanced"
+                        },
+                        "Skills": {
+                            "section_name": "Skills",
+                            "title": "Skills",
+                            "original_content": "Original skills section content from CV",
+                            "content": "Mock optimized skills section for the target role", 
+                            "suggestions": "Match job requirements, include technical skills, and add certifications",
+                            "status": "enhanced"
+                        },
+                        "Education": {
+                            "section_name": "Education",
+                            "title": "Education",
+                            "original_content": "Original education section content from CV",
+                            "content": "Mock formatted education section appropriately",
+                            "suggestions": "Include relevant coursework, add certifications, and highlight honors",
+                            "status": "enhanced"
+                        }
+                    },
+                    "motivation_letter": f"""Dear Hiring Manager,
+
+    I am writing to express my strong interest in the Product Manager position at your company.
+
+    Based on my analysis of the job requirements and my professional background, I believe I would be an excellent fit for this role. My experience in digital transformation and agile methodologies aligns perfectly with your needs.
+
+    I am excited about the opportunity to contribute to your team's success and would welcome the chance to discuss how my skills can benefit your organization.
+
+    Thank you for your consideration.
+
+    Sincerely,
+    [Your Name]
+
+    Generated for MOCK session: {session_id}
+    """,
+                    "processing_time": 0.1
+                }
+            }
             
+            print("✅ Step 2: Creating directories")
+            os.makedirs("data/output/motivation_letters", exist_ok=True)
+            os.makedirs("data/output/cv_suggestions", exist_ok=True)
+            
+            print("✅ Step 3: Writing motivation letter")
+            motivation_file_path = f"data/output/motivation_letters/letter_{session_id}.txt"
+            with open(motivation_file_path, 'w', encoding='utf-8') as f:
+                f.write(self.active_sessions[session_id]["final_results"]["motivation_letter"])
+            
+            print("✅ Step 4: Writing CV suggestions")
+            cv_suggestions_file_path = f"data/output/cv_suggestions/suggestions_{session_id}.json"
+            with open(cv_suggestions_file_path, 'w', encoding='utf-8') as f:
+                # Get only the cv_suggestions part (without datetime objects)
+                cv_suggestions_data = self.active_sessions[session_id]["final_results"]["cv_suggestions"]
+                json.dump(cv_suggestions_data, f, indent=2, ensure_ascii=False)
+            
+            print("✅ SUCCESS: Dummy session created")
+            
+        except Exception as e:
+            print(f"❌ ERROR in create_dummy_completed_session: {str(e)}")
+            print(f"❌ ERROR type: {type(e)}")
+            import traceback
+            print(f"❌ FULL TRACEBACK: {traceback.format_exc()}")
+            raise e
 
 agent_service = AgentService()
